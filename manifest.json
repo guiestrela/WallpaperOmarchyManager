@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "wallpaperomarchymanager",
   "name": "wallpaperOmarchyManager",
-  "version": "1.0.2",
+  "version": "1.0.1",
   "author": "Guiestrela",
   "description": "Replaces the Omarchy background service with a folder-backed one. Each display can have its own folder, shuffle through it or stay pinned to one image, and scale it to taste.",
   "license": "MIT",
