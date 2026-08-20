@@ -47,13 +47,13 @@ services do not compete for control of the wallpaper.
 To update an existing installation, run:
 
 ```bash
-omarchy plugin update wallpaperOmarchyManager
+omarchy plugin update wallpaperomarchymanager
 ```
 
 To remove the plugin, run:
 
 ```bash
-omarchy plugin remove wallpaperOmarchyManager
+omarchy plugin remove wallpaperomarchymanager
 ```
 
 Removing it restores the built-in `omarchy.background` service.

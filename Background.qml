@@ -34,7 +34,7 @@ Item {
 
   // ------------------------------------------------------------- settings
 
-  readonly property string pluginId: (manifest && manifest.id) || "wallpaperOmarchyManager"
+  readonly property string pluginId: (manifest && manifest.id) || "wallpaperomarchymanager"
   readonly property var settings: lookupSettings(shell ? shell.shellConfig : null, pluginId)
 
   readonly property bool perDisplay: setting("perDisplay", true) === true

@@ -16,8 +16,8 @@ import qs.Ui
 // change reaches the wallpaper without a restart.
 Panel {
   id: root
-  moduleName: "wallpaperOmarchyManager"
-  ipcTarget: "wallpaperOmarchyManager"
+  moduleName: "wallpaperomarchymanager"
+  ipcTarget: "wallpaperomarchymanager"
   manageIpc: false
 
   implicitWidth: button.implicitWidth
