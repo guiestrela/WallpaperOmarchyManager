@@ -8,6 +8,7 @@ on:
 # release PR, and cut the tag and GitHub release. Nothing here needs more.
 permissions:
   contents: write
+  issues: write
   pull-requests: write
 
 # Two pushes in quick succession would otherwise race to update the same
