@@ -16,8 +16,8 @@ import qs.Ui
 // change reaches the wallpaper without a restart.
 Panel {
   id: root
-  moduleName: "io.github.guiestrela.wallpapermanager"
-  ipcTarget: "io.github.guiestrela.wallpapermanager"
+  moduleName: "wallpaperOmarchyManager"
+  ipcTarget: "wallpaperOmarchyManager"
   manageIpc: false
 
   implicitWidth: button.implicitWidth
@@ -258,7 +258,7 @@ Panel {
     return out
   }
 
-  readonly property string previewTitle: "wallpaperOmarchyManger" + (version === "" ? "" : " v" + version)
+      readonly property string previewTitle: "wallpaperOmarchyManager" + (version === "" ? "" : " v" + version)
 
   // Only when there is nothing to list; otherwise the images speak for
   // themselves.
@@ -307,7 +307,7 @@ Panel {
   Process {
     id: saveProc
     onExited: function(code, status) {
-      if (code !== 0) console.warn("wallpaperOmarchyManger: failed to save setting (exit " + code + ")")
+      if (code !== 0) console.warn("wallpaperOmarchyManager: failed to save setting (exit " + code + ")")
       root.drainSaves()
       if (!root._saveQueue.length) refreshTimer.restart()
     }
@@ -381,7 +381,7 @@ Panel {
       waitForEnd: true
       onStreamFinished: {
         var err = String(text || "").trim()
-        if (err !== "") console.warn("wallpaperOmarchyManger: zenity: " + err)
+      if (err !== "") console.warn("wallpaperOmarchyManager: zenity: " + err)
       }
     }
     stdout: StdioCollector {

@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "id": "io.github.guiestrela.wallpapermanager",
-  "name": "wallpaperOmarchyManger",
-  "version": "1.0.1",
+  "id": "wallpaperOmarchyManager",
+  "name": "wallpaperOmarchyManager",
+  "version": "1.0.2",
   "author": "Guiestrela",
   "description": "Replaces the Omarchy background service with a folder-backed one. Each display can have its own folder, shuffle through it or stay pinned to one image, and scale it to taste.",
   "license": "MIT",
-  "homepage": "https://github.com/guiestrela/wallpaperOmarchyManger",
-  "repository": "https://github.com/guiestrela/wallpaperOmarchyManger",
+  "homepage": "https://github.com/guiestrela/WallpaperOmarchyManager",
+  "repository": "https://github.com/guiestrela/WallpaperOmarchyManager",
   "kinds": [
     "service",
     "bar-widget"

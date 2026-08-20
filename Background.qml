@@ -34,7 +34,7 @@ Item {
 
   // ------------------------------------------------------------- settings
 
-  readonly property string pluginId: (manifest && manifest.id) || "io.github.guiestrela.wallpapermanager"
+  readonly property string pluginId: (manifest && manifest.id) || "wallpaperOmarchyManager"
   readonly property var settings: lookupSettings(shell ? shell.shellConfig : null, pluginId)
 
   readonly property bool perDisplay: setting("perDisplay", true) === true
@@ -158,7 +158,7 @@ Item {
   // the pre-change value. hasFolder() reads the settings directly.
   readonly property bool folderMode: hasFolder()
 
-  // True when wallpaperOmarchyManger owns the wallpaper on any display, whether that display
+  // True when wallpaperOmarchyManager owns the wallpaper on any display, whether that display
   // shuffles a folder or is pinned to one image.
   function hasFolder() {
     var names = screenNames()
@@ -600,7 +600,7 @@ Item {
     next[path] = true
     badImages = next
     dropFromQueue(path)
-    console.warn("wallpaperOmarchyManger: skipping image that could not be decoded: " + path)
+    console.warn("wallpaperOmarchyManager: skipping image that could not be decoded: " + path)
     replaceBadImage(path)
   }
 

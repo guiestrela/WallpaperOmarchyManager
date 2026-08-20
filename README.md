@@ -1,18 +1,18 @@
-# wallpaperOmarchyManger
+# wallpaperOmarchyManager
 
 Wallpaper manager for [Omarchy](https://omarchy.org) Quattro. Every
 display gets its own image, its own settings if you want them, and your whole
 setup can mix independent folders and shuffle controls per display.
 
 This project is a fork of [Omawall](https://github.com/matjam/omawall),
-adapted and maintained as wallpaperOmarchyManger.
+adapted and maintained as wallpaperOmarchyManager.
 
 > **Written by Claude**, Anthropic's coding agent. Tested on real hardware, but
 > tested isn't proven — and Omarchy plugins run unsandboxed inside your shell
 > process, with your permissions. Read the source first. No promises about
 > your cat.
 
-![wallpaperOmarchyManger](preview.png)
+![wallpaperOmarchyManager](preview.png)
 
 ## Features
 
@@ -32,20 +32,31 @@ adapted and maintained as wallpaperOmarchyManger.
 With no folder set it behaves like the built-in background service, so you can
 install it and decide later.
 
-## Install
+## Install, update and remove
+
+Install the plugin directly from GitHub and enable it:
 
 ```bash
-omarchy plugin add https://github.com/guiestrela/wallpaperOmarchyManger.git --enable
+omarchy plugin add https://github.com/guiestrela/WallpaperOmarchyManager.git --enable
 ```
 
-Put the widget on the `right` when prompted. This disables the built-in
-`omarchy.background` — they would fight over the wallpaper — and removing
-wallpaperOmarchyManger restores it.
+When prompted, place the widget in the `right` section of the bar. Enabling
+this plugin disables the built-in `omarchy.background` service so the two
+services do not compete for control of the wallpaper.
+
+To update an existing installation, run:
 
 ```bash
-omarchy plugin update io.github.guiestrela.wallpapermanager    # update
-omarchy plugin remove io.github.guiestrela.wallpapermanager    # remove, leaves nothing behind
+omarchy plugin update wallpaperOmarchyManager
 ```
+
+To remove the plugin, run:
+
+```bash
+omarchy plugin remove wallpaperOmarchyManager
+```
+
+Removing it restores the built-in `omarchy.background` service.
 
 ## Settings
 

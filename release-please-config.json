@@ -3,7 +3,7 @@
   "packages": {
     ".": {
       "release-type": "simple",
-      "package-name": "wallpaperOmarchyManger",
+      "package-name": "wallpaperOmarchyManager",
       "changelog-path": "CHANGELOG.md",
       "extra-files": [
         {
