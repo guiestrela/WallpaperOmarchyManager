@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "id": "io.github.guiestrela.wallpapermanager",
+  "name": "wallpaperOmarchyManger",
+  "version": "1.0.1",
+  "author": "Guiestrela",
+  "description": "Replaces the Omarchy background service with a folder-backed one. Each display can have its own folder, shuffle through it or stay pinned to one image, and scale it to taste.",
+  "license": "MIT",
+  "homepage": "https://github.com/guiestrela/wallpaperOmarchyManger",
+  "repository": "https://github.com/guiestrela/wallpaperOmarchyManger",
+  "kinds": [
+    "service",
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "service": "Background.qml",
+    "barWidget": "BarWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "Wallpapers",
+    "description": "Give each display its own wallpaper folder, shuffle or pin an image, and choose how it scales.",
+    "category": "Appearance",
+    "allowMultiple": false,
+    "defaultSection": "right",
+    "defaults": {
+      "perDisplayConfig": true,
+      "displayConfig": {},
+      "perDisplay": true,
+      "intervalSec": 0,
+      "shuffleOnWake": false,
+      "folder": "",
+      "recursive": true
+    },
+    "schema": [
+      {
+        "key": "perDisplayConfig",
+        "type": "boolean",
+        "label": "Configure each display separately",
+        "defaultValue": false,
+        "description": "Off: every display shares one configuration."
+      },
+      {
+        "key": "displayConfig",
+        "type": "object",
+        "label": "Per-display configuration",
+        "defaultValue": {},
+        "description": "Keyed by output name, plus an 'all' entry used when perDisplayConfig is off. Each holds folder, recursive, mode (shuffle or single), pinned and scaling (zoom, fitHeight, fitWidth or actual)."
+      },
+      {
+        "key": "perDisplay",
+        "type": "boolean",
+        "label": "Different image per display",
+        "defaultValue": true,
+        "description": "Within a group of displays sharing a folder, off mirrors one image across them."
+      },
+      {
+        "key": "intervalSec",
+        "type": "integer",
+        "label": "Auto-shuffle interval (seconds)",
+        "min": 0,
+        "max": 86400,
+        "step": 60,
+        "defaultValue": 0
+      },
+      {
+        "key": "shuffleOnWake",
+        "type": "boolean",
+        "label": "Shuffle on unlock or wake",
+        "defaultValue": false,
+        "description": "Change wallpaper when you return to the session rather than on a timer."
+      },
+      {
+        "key": "folder",
+        "type": "path",
+        "label": "Wallpaper folder (legacy)",
+        "defaultValue": "",
+        "description": "Read only when displayConfig has no entry, so settings written before per-display support keep working. The first panel edit folds it into displayConfig."
+      },
+      {
+        "key": "recursive",
+        "type": "boolean",
+        "label": "Search subfolders (legacy)",
+        "defaultValue": true,
+        "description": "As above; superseded by the per-display setting."
+      }
+    ]
+  }
+}

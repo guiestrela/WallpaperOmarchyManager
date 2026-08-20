@@ -1,0 +1,118 @@
+# wallpaperOmarchyManger
+
+Wallpaper manager for [Omarchy](https://omarchy.org) Quattro. Every
+display gets its own image, its own settings if you want them, and your whole
+setup can mix independent folders and shuffle controls per display.
+
+This project is a fork of [Omawall](https://github.com/matjam/omawall),
+adapted and maintained as wallpaperOmarchyManger.
+
+> **Written by Claude**, Anthropic's coding agent. Tested on real hardware, but
+> tested isn't proven — and Omarchy plugins run unsandboxed inside your shell
+> process, with your permissions. Read the source first. No promises about
+> your cat.
+
+![wallpaperOmarchyManger](preview.png)
+
+## Features
+
+- **Per-display configuration** — each screen gets its own folder, mode and
+  scaling, or share one configuration across all of them.
+- **Shuffle or pin** — rotate a folder, or hold one image chosen from a
+  thumbnail grid. Mix the two across screens.
+- **Four scaling modes** — zoom, fit height, fit width, or actual size.
+- **Every image before any repeat** — picks come off a shuffled queue that only
+  reshuffles when it empties.
+- **Shuffle** on a timer, on unlock and screensaver exit, or by hand.
+- **Recursive scan** of `.jpg` `.jpeg` `.png` `.gif` `.bmp` `.webp`.
+- **Skips files it can't decode** and re-deals that display.
+- **Bar widget** for all of it. Middle-click the icon for the next image;
+  hover it to see thumbnails of what each display is about to get.
+
+With no folder set it behaves like the built-in background service, so you can
+install it and decide later.
+
+## Install
+
+```bash
+omarchy plugin add https://github.com/guiestrela/wallpaperOmarchyManger.git --enable
+```
+
+Put the widget on the `right` when prompted. This disables the built-in
+`omarchy.background` — they would fight over the wallpaper — and removing
+wallpaperOmarchyManger restores it.
+
+```bash
+omarchy plugin update io.github.guiestrela.wallpapermanager    # update
+omarchy plugin remove io.github.guiestrela.wallpapermanager    # remove, leaves nothing behind
+```
+
+## Settings
+
+Click the wallpaper icon in the bar. Two tabs: **Displays** and
+**Shuffling**. Actions and what's on each screen stay visible below them.
+
+**Displays** — per display, or shared by all of them:
+
+| Setting | Default | Does |
+| --- | --- | --- |
+| Configure each display separately | off | On: a tab per display. Off: one shared configuration. |
+| Folder | _empty_ | Where images come from. Empty = current theme backgrounds. |
+| Search subfolders | on | Scan recursively. |
+| Mode | Shuffle | **Single** pins one image, chosen from a thumbnail grid. |
+| Scaling | Zoom | Zoom, Fit ↕, Fit ↔, or Actual. |
+
+**Shuffling** — global:
+
+| Setting | Default | Does |
+| --- | --- | --- |
+| Auto-shuffle every | `0` | Seconds. `0` is off. |
+| Shuffle on unlock or wake | off | Shuffle on unlock or screensaver exit instead. |
+| Different image per display | on | Off mirrors one image across displays sharing a folder. |
+
+### Mixing displays
+
+Set one display to **Single** and another to **Shuffle** and you get exactly
+that: the pinned one never moves while the other rotates. Displays pointed at
+the same folder share a pool and a deal queue, so they never show the same
+image at once and still see every image before repeating; displays on
+different folders rotate independently.
+
+The four scaling modes only differ when the image and the screen disagree
+about shape. A 3440×1440 wallpaper on a 3440×1440 screen looks identical under
+Zoom, Fit ↕ and Actual, because it is.
+
+### Next image
+
+The pool is dealt from a shuffled queue that only reshuffles once it empties,
+so there is always a next image waiting rather than a fresh roll of the dice.
+**Next image** hands it out — to every display set to Shuffle, leaving the
+pinned ones alone. With every display pinned there is no next image and the
+button is not shown.
+
+Middle-click the bar icon for the same thing. Hovering it shows a thumbnail of
+what each display is about to get.
+
+Keys while the panel is open: `n` next image · `r` rescan · `b` browse
+
+```bash
+omarchy-shell background next           # next image (shuffle is an alias)
+omarchy-shell background rescan         # re-read the folder
+omarchy-shell background status         # JSON state
+
+# hyprland bind
+bind = SUPER SHIFT, W, exec, omarchy-shell -q background next
+```
+
+## Requirements
+
+Omarchy Quattro · `zenity` for the Browse button.
+
+No network access, and nothing is written outside `~/.config/omarchy`.
+
+## Credits
+
+Extends Omarchy's built-in `omarchy.background`
+([basecamp/omarchy](https://github.com/basecamp/omarchy), MIT).
+
+MIT — see [LICENSE](LICENSE).
