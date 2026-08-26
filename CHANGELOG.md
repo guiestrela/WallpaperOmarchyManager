@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.1.0] (2026-08-26)
+
+### Changes
+
+* standardize the plugin ID as `io.github.guiestrela.wallpaperomarchymanager`
+
 ## [1.0.4] (2026-08-26)
 
 ### Features

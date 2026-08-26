@@ -16,8 +16,8 @@ import qs.Ui
 // change reaches the wallpaper without a restart.
 Panel {
   id: root
-  moduleName: "wallpaperomarchymanager"
-  ipcTarget: "wallpaperomarchymanager"
+  moduleName: "io.github.guiestrela.wallpaperomarchymanager"
+  ipcTarget: "io.github.guiestrela.wallpaperomarchymanager"
   manageIpc: false
 
   implicitWidth: button.implicitWidth
