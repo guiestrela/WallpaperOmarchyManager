@@ -1,6 +1,6 @@
 # wallpaperOmarchyManager
 
-Current version: **1.0.4**
+Current version: **1.1.0**
 
 Wallpaper manager for [Omarchy](https://omarchy.org) Quattro. Every
 display gets its own image, its own settings if you want them, and your whole
@@ -37,8 +37,9 @@ adapted and maintained as wallpaperOmarchyManager.
 
 Place animated `.gif` or video files (`.mp4`, `.webm`, `.mkv`, `.mov`, `.avi`)
 in any configured folder. They are discovered and played automatically in both
-**Shuffle** and **Single** modes, alongside static wallpapers. The same scaling
-options and per-display configuration are used for both types.
+**Shuffle** and **Single** modes, alongside static wallpapers. Videos use Qt
+Multimedia and loop silently. The same scaling options and per-display
+configuration are used for both types.
 
 With no folder set it behaves like the built-in background service, so you can
 install it and decide later.
@@ -128,8 +129,9 @@ bind = SUPER SHIFT, W, exec, omarchy-shell -q background next
 
 ## Requirements
 
-Omarchy Quattro · `zenity` for the Browse button. Animated GIF playback uses
-Qt Quick's built-in `AnimatedImage` support.
+Omarchy Quattro · `zenity` for the Browse button · Qt Multimedia for video
+playback. Animated GIF playback uses Qt Quick's built-in `AnimatedImage`
+support.
 
 No network access, and nothing is written outside `~/.config/omarchy`.
 
