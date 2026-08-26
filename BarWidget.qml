@@ -612,7 +612,6 @@ Panel {
                 anchors.fill: parent
                 sourcePath: entry.modelData.path
                 fillModeName: "zoom"
-                playing: true
               }
             }
 

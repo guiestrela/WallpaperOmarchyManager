@@ -11,7 +11,14 @@ Item {
   property string sourcePath: ""
   property string fillModeName: "zoom"
   property bool ready: false
-  readonly property bool videoMode: /\.(mp4|webm|mkv|mov|avi)$/i.test(sourcePath)
+  property bool playing: true
+  function isVideoPath(path) {
+    var value = String(path || "").toLowerCase()
+    return [".mp4", ".webm", ".mkv", ".mov", ".avi"].some(function(ext) {
+      return value.slice(-ext.length) === ext
+    })
+  }
+  readonly property bool videoMode: isVideoPath(sourcePath)
 
   signal wallpaperReady()
   signal wallpaperError(string path)
@@ -26,22 +33,30 @@ Item {
     sourceComponent: root.videoMode ? videoComponent : imageComponent
   }
 
-  onSourcePathChanged: ready = false
+  onSourcePathChanged: {
+    ready = false
+    // Loader bindings can be evaluated before a newly assigned path reaches
+    // videoMode. Select the component imperatively so MP4 never passes through
+    // the image decoder during a source change.
+    renderer.active = false
+    renderer.sourceComponent = isVideoPath(sourcePath) ? videoComponent : imageComponent
+    renderer.active = sourcePath !== ""
+  }
 
   Component {
     id: imageComponent
 
     AnimatedImage {
       anchors.fill: parent
-      source: Util.fileUrl(root.sourcePath)
+      source: root.videoMode ? "" : Util.fileUrl(root.sourcePath)
       fillMode: root.fillModeName === "zoom" ? Image.PreserveAspectCrop : Image.Stretch
       asynchronous: true
       cache: false
       smooth: true
-      playing: true
+      playing: root.playing
       onStatusChanged: {
         if (status === Image.Ready) { root.ready = true; root.wallpaperReady() }
-        else if (status === Image.Error) root.wallpaperError(root.sourcePath)
+        else if (status === Image.Error && !root.videoMode) root.wallpaperError(root.sourcePath)
       }
     }
   }
@@ -50,8 +65,9 @@ Item {
     id: videoComponent
 
     Video {
+      id: video
       anchors.fill: parent
-      source: Util.fileUrl(root.sourcePath)
+      source: root.videoMode ? Util.fileUrl(root.sourcePath) : ""
       fillMode: root.fillModeName === "zoom"
         ? VideoOutput.PreserveAspectCrop : VideoOutput.Stretch
       autoPlay: true
@@ -62,6 +78,14 @@ Item {
       }
       onErrorChanged: {
         if (error !== MediaPlayer.NoError) root.wallpaperError(root.sourcePath)
+      }
+      Component.onCompleted: if (root.playing) play()
+      Connections {
+        target: root
+        function onPlayingChanged() {
+          if (root.playing) video.play()
+          else video.pause()
+        }
       }
     }
   }

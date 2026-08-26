@@ -1103,6 +1103,7 @@ Item {
         height: root.scaledH(panel.scaling, implicitWidth, implicitHeight, parent.width, parent.height)
         sourcePath: panel.dispPath
         fillModeName: panel.scaling
+        playing: true
         onWallpaperReady: root.noteBaseReady(panel.screenKey)
         onWallpaperError: root.noteBadImage(panel.dispPath)
       }
@@ -1114,6 +1115,7 @@ Item {
         height: root.scaledH(panel.scaling, implicitWidth, implicitHeight, parent.width, parent.height)
         sourcePath: panel.oldPath
         fillModeName: panel.scaling
+        playing: visible
         visible: panel.oldPath !== "" && root.revealProgress < 1
       }
 
@@ -1137,6 +1139,7 @@ Item {
           height: root.scaledH(panel.scaling, implicitWidth, implicitHeight, parent.width, parent.height)
           sourcePath: panel.incPath
           fillModeName: panel.scaling
+          playing: panel.incPath !== ""
           // An incoming image that errors never reports ready, so the reveal
           // would sit armed until its timeout and then commit a blank layer.
           // Swap the path out instead.
