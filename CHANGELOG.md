@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.4] (2026-08-26)
+
+### Features
+
+* support MP4 and other common video wallpapers with Qt Multimedia
+
+## [1.0.3] (2026-08-26)
+
+### Features
+
+* support animated GIF wallpapers in the desktop and wallpaper previews
+
 ## [1.0.2](https://github.com/guiestrela/WallpaperOmarchyManager/compare/v1.0.1...v1.0.2) (2026-08-20)
 
 
