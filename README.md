@@ -24,7 +24,8 @@ adapted and maintained as wallpaperOmarchyManager.
 - **Every image before any repeat** — picks come off a shuffled queue that only
   reshuffles when it empties.
 - **Shuffle** on a timer, on unlock and screensaver exit, or by hand.
-- **Recursive scan** of `.jpg` `.jpeg` `.png` `.gif` `.bmp` `.webp`.
+- **Recursive scan** of `.jpg` `.jpeg` `.png` `.gif` `.bmp` `.webp`; animated
+  GIFs play as wallpapers automatically.
 - **Skips files it can't decode** and re-deals that display.
 - **Bar widget** for all of it. Middle-click the icon for the next image;
   hover it to see thumbnails of what each display is about to get.

@@ -18,6 +18,11 @@ import qs.Ui
 // color payload — only the image choice is taken over — so `omarchy theme set`
 // keeps recoloring the bar correctly.
 //
+// AnimatedImage is used for the wallpaper layers so animated GIFs (and any
+// other animated format supported by Qt's image plugins) keep playing. Static
+// images use the same renderer and therefore follow exactly the same folder,
+// shuffle, pinning and scaling paths.
+//
 // All transition state is per-screen (keyed by screen name) in both modes; the
 // global mode simply fills every key with the same value. That keeps one code
 // path for the reveal animation.
@@ -1089,7 +1094,7 @@ Item {
       // the four scaling modes need a size the box cannot express. Anything
       // larger than the screen is cropped by the layer surface, which is what
       // "zoom" and an oversized "actual" both want.
-      Image {
+      AnimatedImage {
         id: base
         anchors.centerIn: parent
         width: root.scaledW(panel.scaling, implicitWidth, implicitHeight, parent.width, parent.height)
@@ -1099,14 +1104,15 @@ Item {
         asynchronous: true
         cache: true
         smooth: true
-        mipmap: true
+        playing: true
+        loops: AnimatedImage.Infinite
         onStatusChanged: {
           if (status === Image.Ready) root.noteBaseReady(panel.screenKey)
           else if (status === Image.Error) root.noteBadImage(panel.dispPath)
         }
       }
 
-      Image {
+      AnimatedImage {
         id: oldFrame
         anchors.centerIn: parent
         width: root.scaledW(panel.scaling, implicitWidth, implicitHeight, parent.width, parent.height)
@@ -1116,7 +1122,8 @@ Item {
         asynchronous: true
         cache: false
         smooth: true
-        mipmap: true
+        playing: true
+        loops: AnimatedImage.Infinite
         visible: panel.oldPath !== "" && root.revealProgress < 1
       }
 
@@ -1133,7 +1140,7 @@ Item {
           maskSpreadAtMin: 0.02
         }
 
-        Image {
+        AnimatedImage {
           id: incomingFrame
           anchors.centerIn: parent
           width: root.scaledW(panel.scaling, implicitWidth, implicitHeight, parent.width, parent.height)
@@ -1143,7 +1150,8 @@ Item {
           asynchronous: true
           cache: false
           smooth: true
-          mipmap: true
+          playing: true
+          loops: AnimatedImage.Infinite
           // An incoming image that errors never reports ready, so the reveal
           // would sit armed until its timeout and then commit a blank layer.
           // Swap the path out instead.

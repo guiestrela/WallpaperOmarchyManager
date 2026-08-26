@@ -607,13 +607,15 @@ Panel {
               color: "transparent"
               clip: true
 
-              Image {
+              AnimatedImage {
                 anchors.fill: parent
                 source: Util.fileUrl(entry.modelData.path)
                 fillMode: Image.PreserveAspectCrop
                 asynchronous: true
                 cache: true
                 sourceSize.width: 240
+                playing: true
+                loops: AnimatedImage.Infinite
               }
             }
 
@@ -860,7 +862,7 @@ Panel {
                 width: picker.cellWidth
                 height: picker.cellHeight
 
-                Image {
+                AnimatedImage {
                   anchors.fill: parent
                   anchors.margins: Style.space(3)
                   source: "file://" + modelData
@@ -871,6 +873,8 @@ Panel {
                   // without this a grid of 4K wallpapers would decode hundreds
                   // of megabytes to draw a few hundred pixels.
                   sourceSize.width: 320
+                  playing: true
+                  loops: AnimatedImage.Infinite
                   clip: true
 
                   Rectangle {

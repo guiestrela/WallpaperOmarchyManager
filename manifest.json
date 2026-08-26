@@ -4,7 +4,7 @@
   "name": "wallpaperOmarchyManager",
   "version": "1.0.2",
   "author": "Guiestrela",
-  "description": "Replaces the Omarchy background service with a folder-backed one. Each display can have its own folder, shuffle through it or stay pinned to one image, and scale it to taste.",
+  "description": "Replaces the Omarchy background service with a folder-backed one. Each display can have its own wallpaper folder, shuffle through static or animated wallpapers, or stay pinned to one, and scale it to taste.",
   "license": "MIT",
   "homepage": "https://github.com/guiestrela/WallpaperOmarchyManager",
   "repository": "https://github.com/guiestrela/WallpaperOmarchyManager",
@@ -18,7 +18,7 @@
   },
   "barWidget": {
     "displayName": "Wallpapers",
-    "description": "Give each display its own wallpaper folder, shuffle or pin an image, and choose how it scales.",
+    "description": "Give each display its own wallpaper folder, shuffle or pin a static or animated wallpaper, and choose how it scales.",
     "category": "Appearance",
     "allowMultiple": false,
     "defaultSection": "right",
