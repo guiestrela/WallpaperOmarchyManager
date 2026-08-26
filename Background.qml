@@ -40,7 +40,7 @@ Item {
 
   // ------------------------------------------------------------- settings
 
-  readonly property string pluginId: (manifest && manifest.id) || "wallpaperomarchymanager"
+  readonly property string pluginId: (manifest && manifest.id) || "io.github.guiestrela.wallpaperomarchymanager"
   readonly property var settings: lookupSettings(shell ? shell.shellConfig : null, pluginId)
 
   readonly property bool perDisplay: setting("perDisplay", true) === true

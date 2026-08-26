@@ -58,13 +58,13 @@ services do not compete for control of the wallpaper.
 To update an existing installation, run:
 
 ```bash
-omarchy plugin update wallpaperomarchymanager
+omarchy plugin update io.github.guiestrela.wallpaperomarchymanager
 ```
 
 To remove the plugin, run:
 
 ```bash
-omarchy plugin remove wallpaperomarchymanager
+omarchy plugin remove io.github.guiestrela.wallpaperomarchymanager
 ```
 
 Removing it restores the built-in `omarchy.background` service.
