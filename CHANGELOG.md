@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/guiestrela/WallpaperOmarchyManager/compare/v1.1.0...v1.1.1) (2026-08-26)
+
+
+### Bug Fixes
+
+* update version to 1.1.0 and improve README clarity ([e82908b](https://github.com/guiestrela/WallpaperOmarchyManager/commit/e82908bc1977ac16e1cedc49470f703420f34289))
+
 ## [1.1.0](https://github.com/guiestrela/WallpaperOmarchyManager/compare/v1.0.2...v1.1.0) (2026-08-26)
 
 
