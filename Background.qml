@@ -1105,7 +1105,6 @@ Item {
         cache: true
         smooth: true
         playing: true
-        loops: AnimatedImage.Infinite
         onStatusChanged: {
           if (status === Image.Ready) root.noteBaseReady(panel.screenKey)
           else if (status === Image.Error) root.noteBadImage(panel.dispPath)
@@ -1123,7 +1122,6 @@ Item {
         cache: false
         smooth: true
         playing: true
-        loops: AnimatedImage.Infinite
         visible: panel.oldPath !== "" && root.revealProgress < 1
       }
 
@@ -1151,7 +1149,6 @@ Item {
           cache: false
           smooth: true
           playing: true
-          loops: AnimatedImage.Infinite
           // An incoming image that errors never reports ready, so the reveal
           // would sit armed until its timeout and then commit a blank layer.
           // Swap the path out instead.

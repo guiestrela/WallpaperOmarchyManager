@@ -615,7 +615,6 @@ Panel {
                 cache: true
                 sourceSize.width: 240
                 playing: true
-                loops: AnimatedImage.Infinite
               }
             }
 
@@ -874,7 +873,6 @@ Panel {
                   // of megabytes to draw a few hundred pixels.
                   sourceSize.width: 320
                   playing: true
-                  loops: AnimatedImage.Infinite
                   clip: true
 
                   Rectangle {
