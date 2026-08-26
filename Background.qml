@@ -4,6 +4,7 @@ import Quickshell.Wayland
 import QtQuick
 import QtQuick.Effects
 import QtQuick.Shapes
+import QtMultimedia
 import qs.Commons
 import qs.Ui
 
@@ -345,6 +346,7 @@ Item {
       "find -L " + Util.shellQuote(poolKeyFolder(key)) +
       (poolKeyRecursive(key) ? "" : " -maxdepth 1") +
       " -type f \\( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.gif'" +
+      " -o -iname '*.mp4' -o -iname '*.webm' -o -iname '*.mkv' -o -iname '*.mov' -o -iname '*.avi'" +
       " -o -iname '*.bmp' -o -iname '*.webp' \\) 2>/dev/null"]
     scanProc.running = true
   }
@@ -1078,9 +1080,9 @@ Item {
       // is what previously starved the second monitor of its reveal.
       function reportIncomingReady() {
         if (!panel.incPath) return
-        if (incomingFrame.status !== Image.Ready) return
+        if (!incomingFrame.ready) return
         Qt.callLater(function() {
-          if (!panel.incPath || incomingFrame.status !== Image.Ready) return
+          if (!panel.incPath || !incomingFrame.ready) return
           root.noteIncomingReady(panel.screenKey)
         })
       }
@@ -1094,41 +1096,31 @@ Item {
       // the four scaling modes need a size the box cannot express. Anything
       // larger than the screen is cropped by the layer surface, which is what
       // "zoom" and an oversized "actual" both want.
-      AnimatedImage {
+      WallpaperRenderer {
         id: base
         anchors.centerIn: parent
         width: root.scaledW(panel.scaling, implicitWidth, implicitHeight, parent.width, parent.height)
         height: root.scaledH(panel.scaling, implicitWidth, implicitHeight, parent.width, parent.height)
-        source: root.imageUrl(panel.dispPath)
-        fillMode: panel.scaling === "zoom" ? Image.PreserveAspectCrop : Image.Stretch
-        asynchronous: true
-        cache: true
-        smooth: true
-        playing: true
-        onStatusChanged: {
-          if (status === Image.Ready) root.noteBaseReady(panel.screenKey)
-          else if (status === Image.Error) root.noteBadImage(panel.dispPath)
-        }
+        sourcePath: panel.dispPath
+        fillModeName: panel.scaling
+        onWallpaperReady: root.noteBaseReady(panel.screenKey)
+        onWallpaperError: root.noteBadImage(panel.dispPath)
       }
 
-      AnimatedImage {
+      WallpaperRenderer {
         id: oldFrame
         anchors.centerIn: parent
         width: root.scaledW(panel.scaling, implicitWidth, implicitHeight, parent.width, parent.height)
         height: root.scaledH(panel.scaling, implicitWidth, implicitHeight, parent.width, parent.height)
-        source: root.imageUrl(panel.oldPath)
-        fillMode: panel.scaling === "zoom" ? Image.PreserveAspectCrop : Image.Stretch
-        asynchronous: true
-        cache: false
-        smooth: true
-        playing: true
+        sourcePath: panel.oldPath
+        fillModeName: panel.scaling
         visible: panel.oldPath !== "" && root.revealProgress < 1
       }
 
       Item {
         id: incomingLayer
         anchors.fill: parent
-        visible: panel.incPath !== "" && incomingFrame.status === Image.Ready && (root.revealProgress >= 1 || root.revealArmed)
+        visible: panel.incPath !== "" && incomingFrame.ready && (root.revealProgress >= 1 || root.revealArmed)
         layer.enabled: panel.incPath !== "" && root.revealProgress < 1
         layer.smooth: true
         layer.effect: MultiEffect {
@@ -1138,24 +1130,18 @@ Item {
           maskSpreadAtMin: 0.02
         }
 
-        AnimatedImage {
+        WallpaperRenderer {
           id: incomingFrame
           anchors.centerIn: parent
           width: root.scaledW(panel.scaling, implicitWidth, implicitHeight, parent.width, parent.height)
           height: root.scaledH(panel.scaling, implicitWidth, implicitHeight, parent.width, parent.height)
-          source: root.imageUrl(panel.incPath)
-          fillMode: panel.scaling === "zoom" ? Image.PreserveAspectCrop : Image.Stretch
-          asynchronous: true
-          cache: false
-          smooth: true
-          playing: true
+          sourcePath: panel.incPath
+          fillModeName: panel.scaling
           // An incoming image that errors never reports ready, so the reveal
           // would sit armed until its timeout and then commit a blank layer.
           // Swap the path out instead.
-          onStatusChanged: {
-            if (status === Image.Error) root.noteBadImage(panel.incPath)
-            else panel.reportIncomingReady()
-          }
+          onWallpaperReady: panel.reportIncomingReady()
+          onWallpaperError: root.noteBadImage(panel.incPath)
         }
       }
 

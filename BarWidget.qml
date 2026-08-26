@@ -160,6 +160,7 @@ Panel {
     pickerProc.command = ["bash", "-c",
       "find -L " + Util.shellQuote(folder) + (current.recursive ? "" : " -maxdepth 1") +
       " -type f \\( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.gif'" +
+      " -o -iname '*.mp4' -o -iname '*.webm' -o -iname '*.mkv' -o -iname '*.mov' -o -iname '*.avi'" +
       " -o -iname '*.bmp' -o -iname '*.webp' \\) 2>/dev/null | sort -u"]
     pickerProc.running = true
   }
@@ -607,13 +608,10 @@ Panel {
               color: "transparent"
               clip: true
 
-              AnimatedImage {
+              WallpaperRenderer {
                 anchors.fill: parent
-                source: Util.fileUrl(entry.modelData.path)
-                fillMode: Image.PreserveAspectCrop
-                asynchronous: true
-                cache: true
-                sourceSize.width: 240
+                sourcePath: entry.modelData.path
+                fillModeName: "zoom"
                 playing: true
               }
             }
@@ -861,18 +859,11 @@ Panel {
                 width: picker.cellWidth
                 height: picker.cellHeight
 
-                AnimatedImage {
+                WallpaperRenderer {
                   anchors.fill: parent
                   anchors.margins: Style.space(3)
-                  source: "file://" + modelData
-                  fillMode: Image.PreserveAspectCrop
-                  asynchronous: true
-                  cache: true
-                  // Decode at thumbnail size rather than full resolution:
-                  // without this a grid of 4K wallpapers would decode hundreds
-                  // of megabytes to draw a few hundred pixels.
-                  sourceSize.width: 320
-                  playing: true
+                  sourcePath: modelData
+                  fillModeName: "zoom"
                   clip: true
 
                   Rectangle {

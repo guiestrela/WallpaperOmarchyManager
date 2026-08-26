@@ -1,5 +1,7 @@
 # wallpaperOmarchyManager
 
+Current version: **1.0.4**
+
 Wallpaper manager for [Omarchy](https://omarchy.org) Quattro. Every
 display gets its own image, its own settings if you want them, and your whole
 setup can mix independent folders and shuffle controls per display.
@@ -24,11 +26,19 @@ adapted and maintained as wallpaperOmarchyManager.
 - **Every image before any repeat** — picks come off a shuffled queue that only
   reshuffles when it empties.
 - **Shuffle** on a timer, on unlock and screensaver exit, or by hand.
-- **Recursive scan** of `.jpg` `.jpeg` `.png` `.gif` `.bmp` `.webp`; animated
-  GIFs play as wallpapers automatically.
+- **Recursive scan** of `.jpg` `.jpeg` `.png` `.gif` `.bmp` `.webp` `.mp4`
+  `.webm` `.mkv` `.mov` `.avi`; animated media plays as wallpapers
+  automatically.
 - **Skips files it can't decode** and re-deals that display.
 - **Bar widget** for all of it. Middle-click the icon for the next image;
   hover it to see thumbnails of what each display is about to get.
+
+### Animated wallpapers
+
+Place animated `.gif` or video files (`.mp4`, `.webm`, `.mkv`, `.mov`, `.avi`)
+in any configured folder. They are discovered and played automatically in both
+**Shuffle** and **Single** modes, alongside static wallpapers. The same scaling
+options and per-display configuration are used for both types.
 
 With no folder set it behaves like the built-in background service, so you can
 install it and decide later.
@@ -118,7 +128,8 @@ bind = SUPER SHIFT, W, exec, omarchy-shell -q background next
 
 ## Requirements
 
-Omarchy Quattro · `zenity` for the Browse button.
+Omarchy Quattro · `zenity` for the Browse button. Animated GIF playback uses
+Qt Quick's built-in `AnimatedImage` support.
 
 No network access, and nothing is written outside `~/.config/omarchy`.
 

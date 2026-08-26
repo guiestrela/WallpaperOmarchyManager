@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.4] (2026-08-26)
+
+### Features
+
+* support MP4 and other common video wallpapers with Qt Multimedia
+
 ## [1.0.3] (2026-08-26)
 
 ### Features
