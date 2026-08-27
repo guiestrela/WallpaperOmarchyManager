@@ -231,23 +231,24 @@ Item {
   property var incomingMap: ({})
   property var oldMap: ({})
 
+  // The two persistent renderer slots are used as a ping-pong buffer. The
+  // inactive one decodes the next wallpaper and becomes the active one when
+  // the reveal finishes. Keeping that decoded renderer alive avoids loading
+  // the new wallpaper a second time just to turn it into the base layer.
+  property var slotAMap: ({})
+  property var slotBMap: ({})
+  property int frontSlot: 0
+
   // Global-mode bookkeeping, kept so the stock symlink/theme paths behave
   // identically to upstream.
   property string currentBackground: ""
 
-  property bool finishingTransition: false
   property int backgroundVersion: 0
   property int revealStartedVersion: -1
   property int pendingThemeVersion: -1
   property string pendingColorsRaw: ""
   property string pendingShellRaw: ""
   property real revealProgress: 1
-
-  // Screen names whose base Image has finished loading the post-transition
-  // picture. The incoming layer is only torn down once every screen is done,
-  // otherwise a fast display drops back to the old image while a slow one is
-  // still decoding.
-  property var baseReady: ({})
 
   // Screen names whose *incoming* image has decoded, plus the gate that lets
   // every screen's incoming layer become visible at the same moment.
@@ -705,17 +706,18 @@ Item {
   function beginTransition(nextDisplayed, nextIncoming, nextOld, instant) {
     backgroundVersion += 1
     revealStartedVersion = -1
-    baseReady = ({})
     incomingReady = ({})
     revealArmed = false
     revealAnimation.stop()
     revealArmTimeout.stop()
-    finishingTransition = false
 
     if (instant) {
       displayedMap = nextIncoming
       incomingMap = ({})
       oldMap = ({})
+      slotAMap = nextIncoming
+      slotBMap = ({})
+      frontSlot = 0
       revealProgress = 1
       return
     }
@@ -723,21 +725,23 @@ Item {
     displayedMap = nextDisplayed
     oldMap = nextOld
     incomingMap = nextIncoming
+    if (frontSlot === 0) slotBMap = nextIncoming
+    else slotAMap = nextIncoming
     revealProgress = 0
     revealArmTimeout.restart()
   }
 
   function applyPerScreen(picks, instant) {
     var names = screenNames()
-    var nextOld = ({})
     var changed = false
     for (var i = 0; i < names.length; i++) {
       var n = names[i]
-      nextOld[n] = displayedMap[n] || ""
       if (picks[n] !== displayedMap[n]) changed = true
     }
     if (!changed && !instant) return
-    beginTransition(displayedMap, picks, nextOld, instant === true || displayedIsEmpty())
+    // The active renderer already contains the old wallpaper. A separate old
+    // layer here would decode and upload the same image a second time.
+    beginTransition(displayedMap, picks, ({}), instant === true || displayedIsEmpty())
   }
 
   // Stock single-image path: fill every screen with the same value.
@@ -755,8 +759,11 @@ Item {
     for (var i = 0; i < names.length; i++) {
       var n = names[i]
       nextIncoming[n] = path
-      nextOld[n] = fromPath || displayedMap[n] || ""
       nextDisplayed[n] = displayedMap[n] || ""
+      // Theme transitions may explicitly provide a different source frame.
+      // Keep the compatibility layer only for that exceptional case; the
+      // active slot already supplies the ordinary previous wallpaper.
+      nextOld[n] = fromPath && fromPath !== nextDisplayed[n] ? fromPath : ""
     }
     beginTransition(nextDisplayed, nextIncoming, nextOld, instant === true || displayedIsEmpty())
   }
@@ -843,21 +850,6 @@ Item {
     interval: 1500
     repeat: false
     onTriggered: root.armReveal()
-  }
-
-  function noteBaseReady(name) {
-    if (!finishingTransition) return
-    if (baseReady[name]) return
-    var next = ({})
-    for (var k in baseReady) next[k] = baseReady[k]
-    next[name] = true
-    baseReady = next
-
-    var names = screenNames()
-    for (var i = 0; i < names.length; i++) if (!next[names[i]]) return
-    incomingMap = ({})
-    oldMap = ({})
-    finishingTransition = false
   }
 
   // --------------------------------------------------------------- actions
@@ -1007,8 +999,15 @@ Item {
         next[n] = root.incomingMap[n] || root.displayedMap[n] || ""
       }
       root.displayedMap = next
-      root.baseReady = ({})
-      root.finishingTransition = true
+      // The incoming slot is already decoded and visible. Promote it instead
+      // of changing a base renderer's source and decoding the same file again.
+      root.frontSlot = root.frontSlot === 0 ? 1 : 0
+      // Release the previous wallpaper between transitions. The empty slot is
+      // populated again when the next wallpaper needs to be preloaded.
+      if (root.frontSlot === 0) root.slotBMap = ({})
+      else root.slotAMap = ({})
+      root.incomingMap = ({})
+      root.oldMap = ({})
       root.revealProgress = 1
     }
   }
@@ -1057,6 +1056,8 @@ Item {
       readonly property string dispPath: root.displayedMap[screenKey] || ""
       readonly property string incPath: root.incomingMap[screenKey] || ""
       readonly property string oldPath: root.oldMap[screenKey] || ""
+      readonly property string slotAPath: root.slotAMap[screenKey] || ""
+      readonly property string slotBPath: root.slotBMap[screenKey] || ""
       readonly property string scaling: root.configFor(screenKey).scaling
 
       screen: modelData
@@ -1080,9 +1081,11 @@ Item {
       // is what previously starved the second monitor of its reveal.
       function reportIncomingReady() {
         if (!panel.incPath) return
-        if (!incomingFrame.ready) return
+        var frame = root.frontSlot === 0 ? frameB : frameA
+        if (!frame.ready) return
         Qt.callLater(function() {
-          if (!panel.incPath || !incomingFrame.ready) return
+          var currentFrame = root.frontSlot === 0 ? frameB : frameA
+          if (!panel.incPath || !currentFrame.ready) return
           root.noteIncomingReady(panel.screenKey)
         })
       }
@@ -1097,20 +1100,9 @@ Item {
       // larger than the screen is cropped by the layer surface, which is what
       // "zoom" and an oversized "actual" both want.
       WallpaperRenderer {
-        id: base
-        anchors.centerIn: parent
-        width: root.scaledW(panel.scaling, implicitWidth, implicitHeight, parent.width, parent.height)
-        height: root.scaledH(panel.scaling, implicitWidth, implicitHeight, parent.width, parent.height)
-        sourcePath: panel.dispPath
-        fillModeName: panel.scaling
-        playing: true
-        onWallpaperReady: root.noteBaseReady(panel.screenKey)
-        onWallpaperError: root.noteBadImage(panel.dispPath)
-      }
-
-      WallpaperRenderer {
         id: oldFrame
         anchors.centerIn: parent
+        z: 1
         width: root.scaledW(panel.scaling, implicitWidth, implicitHeight, parent.width, parent.height)
         height: root.scaledH(panel.scaling, implicitWidth, implicitHeight, parent.width, parent.height)
         sourcePath: panel.oldPath
@@ -1120,10 +1112,13 @@ Item {
       }
 
       Item {
-        id: incomingLayer
+        id: frameALayer
         anchors.fill: parent
-        visible: panel.incPath !== "" && incomingFrame.ready && (root.revealProgress >= 1 || root.revealArmed)
-        layer.enabled: panel.incPath !== "" && root.revealProgress < 1
+        z: root.frontSlot === 0 ? 0 : 2
+        visible: root.frontSlot === 0
+          ? panel.slotAPath !== ""
+          : panel.incPath !== "" && frameA.ready && (root.revealProgress >= 1 || root.revealArmed)
+        layer.enabled: root.frontSlot !== 0 && panel.incPath !== "" && root.revealProgress < 1
         layer.smooth: true
         layer.effect: MultiEffect {
           maskEnabled: true
@@ -1133,18 +1128,44 @@ Item {
         }
 
         WallpaperRenderer {
-          id: incomingFrame
+          id: frameA
           anchors.centerIn: parent
           width: root.scaledW(panel.scaling, implicitWidth, implicitHeight, parent.width, parent.height)
           height: root.scaledH(panel.scaling, implicitWidth, implicitHeight, parent.width, parent.height)
-          sourcePath: panel.incPath
+          sourcePath: panel.slotAPath
           fillModeName: panel.scaling
-          playing: panel.incPath !== ""
-          // An incoming image that errors never reports ready, so the reveal
-          // would sit armed until its timeout and then commit a blank layer.
-          // Swap the path out instead.
+          playing: frameALayer.visible
           onWallpaperReady: panel.reportIncomingReady()
-          onWallpaperError: root.noteBadImage(panel.incPath)
+          onWallpaperError: root.noteBadImage(panel.slotAPath)
+        }
+      }
+
+      Item {
+        id: frameBLayer
+        anchors.fill: parent
+        z: root.frontSlot === 1 ? 0 : 2
+        visible: root.frontSlot === 1
+          ? panel.slotBPath !== ""
+          : panel.incPath !== "" && frameB.ready && (root.revealProgress >= 1 || root.revealArmed)
+        layer.enabled: root.frontSlot !== 1 && panel.incPath !== "" && root.revealProgress < 1
+        layer.smooth: true
+        layer.effect: MultiEffect {
+          maskEnabled: true
+          maskSource: revealMask
+          maskThresholdMin: 0.5
+          maskSpreadAtMin: 0.02
+        }
+
+        WallpaperRenderer {
+          id: frameB
+          anchors.centerIn: parent
+          width: root.scaledW(panel.scaling, implicitWidth, implicitHeight, parent.width, parent.height)
+          height: root.scaledH(panel.scaling, implicitWidth, implicitHeight, parent.width, parent.height)
+          sourcePath: panel.slotBPath
+          fillModeName: panel.scaling
+          playing: frameBLayer.visible
+          onWallpaperReady: panel.reportIncomingReady()
+          onWallpaperError: root.noteBadImage(panel.slotBPath)
         }
       }
 
