@@ -49,6 +49,10 @@ Item {
     AnimatedImage {
       anchors.fill: parent
       source: root.videoMode ? "" : Util.fileUrl(root.sourcePath)
+      // Decode static and animated images near their rendered size. Some
+      // wallpapers are tens of thousands of pixels wide and otherwise exceed
+      // Qt's 256 MiB decoded-image limit even when the compressed file is small.
+      sourceSize: Qt.size(Math.max(1, Math.ceil(width)), Math.max(1, Math.ceil(height)))
       fillMode: root.fillModeName === "zoom" ? Image.PreserveAspectCrop : Image.Stretch
       asynchronous: true
       cache: false
