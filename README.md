@@ -9,7 +9,7 @@ setup can mix independent folders and shuffle controls per display.
 This project is a fork of [Omawall](https://github.com/matjam/omawall),
 adapted and maintained as wallpaperOmarchyManager.
 
-> **Written by Claude**, Anthropic's coding agent. Tested on real hardware, but
+> **Rewritten by Codex**, OpenAI's coding agent. Tested on real hardware, but
 > tested isn't proven — and Omarchy plugins run unsandboxed inside your shell
 > process, with your permissions. Read the source first. No promises about
 > your cat.
