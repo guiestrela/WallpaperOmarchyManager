@@ -325,6 +325,7 @@ Item {
     if (scanProc.running) scanProc.running = false
     pools = ({})
     dealQueues = ({})
+    recentDeals = ({})
     poolLoaded = false
     if (!hasFolder()) return
     scanQueue = distinctPoolKeys()
@@ -348,7 +349,7 @@ Item {
       (poolKeyRecursive(key) ? "" : " -maxdepth 1") +
       " -type f \\( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.gif'" +
       " -o -iname '*.mp4' -o -iname '*.webm' -o -iname '*.mkv' -o -iname '*.mov' -o -iname '*.avi'" +
-      " -o -iname '*.bmp' -o -iname '*.webp' \\) 2>/dev/null"]
+      " -o -iname '*.bmp' -o -iname '*.webp' \\) -exec readlink -f -- {} \\; 2>/dev/null | sort -u"]
     scanProc.running = true
   }
 
@@ -400,11 +401,34 @@ Item {
   // small folder wraps often without dragging a larger one round with it.
   property var dealQueues: ({})
 
+  // The tail of the previous pass through each pool. A queue already prevents
+  // repeats within one pass, but without this memory the first positions of a
+  // newly shuffled pass can contain images that were only just shown at the
+  // end of the old one. Keeping half a pool (capped to avoid needless state on
+  // very large collections) lets refillQueue push those recent images deeper
+  // into the next pass while preserving the one-use-per-pass guarantee.
+  property var recentDeals: ({})
+
   function setQueue(key, list) {
     var next = ({})
     for (var k in dealQueues) next[k] = dealQueues[k]
     next[key] = list
     dealQueues = next
+  }
+
+  function rememberDeal(key, path) {
+    var poolSize = usablePoolFor(key).length
+    var limit = Math.min(24, Math.ceil(poolSize / 2))
+    if (limit <= 0) return
+
+    var history = (recentDeals[key] || []).filter(function(p) { return p !== path })
+    history.push(path)
+    if (history.length > limit) history = history.slice(history.length - limit)
+
+    var next = ({})
+    for (var k in recentDeals) next[k] = recentDeals[k]
+    next[key] = history
+    recentDeals = next
   }
 
   // The one place a repeat can still show up is across the wrap: the tail of a
@@ -417,19 +441,20 @@ Item {
     var next = shuffled(usablePoolFor(key))
     var avoidList = Array.isArray(avoid) ? avoid : (avoid ? [avoid] : [])
 
-    // Guard the leading positions a deal will consume, and only as far as the
-    // pool can actually supply alternatives. A pool no larger than the number
-    // of displays has nothing to swap in, and must repeat.
-    var guard = Math.min(avoidList.length, Math.max(0, next.length - avoidList.length))
-    for (var i = 0; i < guard; i++) {
-      if (avoidList.indexOf(next[i]) === -1) continue
-      for (var j = guard; j < next.length; j++) {
-        if (avoidList.indexOf(next[j]) !== -1) continue
-        var tmp = next[i]; next[i] = next[j]; next[j] = tmp
-        break
-      }
+    // Keep both currently visible and recently dealt images out of the front
+    // of the new pass whenever the pool has alternatives. Both partitions are
+    // already randomly ordered, so this only constrains recency, not the order
+    // among equally eligible images.
+    var recent = recentDeals[key] || []
+    var fresh = []
+    var delayed = []
+    for (var i = 0; i < next.length; i++) {
+      if (avoidList.indexOf(next[i]) !== -1 || recent.indexOf(next[i]) !== -1)
+        delayed.push(next[i])
+      else
+        fresh.push(next[i])
     }
-    setQueue(key, next)
+    setQueue(key, fresh.concat(delayed))
   }
 
   // Take `count` images off a pool's queue, refilling as it runs dry. Returns
@@ -448,8 +473,10 @@ Item {
         if (!queue.length) break
       }
       queue = queue.slice()
-      out.push(String(queue.shift()))
+      var picked = String(queue.shift())
+      out.push(picked)
       setQueue(key, queue)
+      rememberDeal(key, picked)
     }
     return out
   }
