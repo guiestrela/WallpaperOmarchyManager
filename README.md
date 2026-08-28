@@ -58,7 +58,7 @@ install it and decide later.
 Install the plugin directly from GitHub and enable it:
 
 ```bash
-omarchy plugin add https://github.com/guiestrela/WallpaperOmarchyManager.git --enable
+omarchy plugin add https://github.com/guiestrela/wallpaper-omarchy-manager.git --enable
 ```
 
 When prompted, place the widget in the `right` section of the bar. Enabling
