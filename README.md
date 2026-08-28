@@ -40,6 +40,7 @@ more robust for large or unsupported files.
 
 For responsiveness, recursive scans stay on the selected filesystem, descend
 at most 32 levels, stop after 10,000 entries, and time out after 15 seconds.
+Pinned wallpapers must be inside the configured folder.
 
 ### Animated wallpapers
 
@@ -141,7 +142,17 @@ Omarchy Quattro · `zenity` for the Browse button · Qt Multimedia for video
 playback. Animated GIF playback uses Qt Quick's built-in `AnimatedImage`
 support.
 
-No network access, and nothing is written outside `~/.config/omarchy`.
+The runtime does not use the network. Settings are stored through Omarchy in
+`~/.config/omarchy`; the service also updates Omarchy's current-wallpaper link
+at `~/.local/state/omarchy/current/background` so the lock screen can use it.
+
+## Security notes
+
+Omarchy plugins run in the user's shell process and are not sandboxed. Only
+choose wallpaper folders containing files you trust: Qt Multimedia and the
+image decoders process the selected media. The plugin does not execute files
+from wallpaper folders, follow symlinks during scans, or request elevated
+permissions.
 
 ## Credits
 
