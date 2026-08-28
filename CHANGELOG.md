@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.2.0](https://github.com/guiestrela/WallpaperOmarchyManager/compare/v1.1.1...v1.2.0) (2026-08-28)
+
+
+### Features
+
+* prevent recent images from repeating ([5676073](https://github.com/guiestrela/WallpaperOmarchyManager/commit/567607384446ec8731c9c83962efa8fb204d2252))
+
+
+### Bug Fixes
+
+* enhance file scanning and image decoding ([c76a99b](https://github.com/guiestrela/WallpaperOmarchyManager/commit/c76a99b4f5db0b5244e644ad3b02c9350d357ccc))
+* improve image decoding for large wallpapers in AnimatedImage component ([40da0ad](https://github.com/guiestrela/WallpaperOmarchyManager/commit/40da0ad4d5c532023dc09eccb2e9ca0aa05dcaa3))
+* optimize wallpaper rendering with persistent buffers for smoother transitions ([4573fa3](https://github.com/guiestrela/WallpaperOmarchyManager/commit/4573fa3f3c904b096ac945420a090afc6b20e8bc))
+* restore marketplace plugin id ([82777a6](https://github.com/guiestrela/WallpaperOmarchyManager/commit/82777a6b06d4b2a951c20f2b53b82fc7f2462029))
+
 ## [1.1.1](https://github.com/guiestrela/WallpaperOmarchyManager/compare/v1.1.0...v1.1.1) (2026-08-26)
 
 
