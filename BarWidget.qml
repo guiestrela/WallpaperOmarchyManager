@@ -624,6 +624,7 @@ Panel {
               Text {
                 width: parent.width
                 text: entry.modelData.screen
+                textFormat: Text.PlainText
                 color: previewCard.dim
                 font.family: root.fontFamily
                 font.pixelSize: Style.font.caption
@@ -633,6 +634,7 @@ Panel {
               Text {
                 width: parent.width
                 text: entry.modelData.file
+                textFormat: Text.PlainText
                 color: previewCard.text
                 font.family: root.fontFamily
                 font.pixelSize: Style.font.bodySmall
@@ -890,6 +892,7 @@ Panel {
             text: root.current.pinned === ""
               ? "No image chosen yet."
               : root.current.pinned.substring(root.current.pinned.lastIndexOf("/") + 1)
+            textFormat: Text.PlainText
             color: Qt.darker(root.fg, 1.5)
             font.family: root.fontFamily
             font.pixelSize: Style.font.caption
@@ -1010,6 +1013,7 @@ Panel {
               required property var modelData
               width: column.width
               text: modelData.screen + "  ·  " + modelData.file
+              textFormat: Text.PlainText
               color: Qt.darker(root.fg, 1.6)
               font.family: root.fontFamily
               font.pixelSize: Style.font.caption
