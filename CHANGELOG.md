@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/guiestrela/WallpaperOmarchyManager/compare/v1.2.0...v1.2.1) (2026-08-28)
+
+
+### Bug Fixes
+
+* sanitize path inputs and limit folder scans ([08f2d67](https://github.com/guiestrela/WallpaperOmarchyManager/commit/08f2d6796f06512c74b98d013b98eb50b1a234fe))
+
 ## [1.2.0](https://github.com/guiestrela/WallpaperOmarchyManager/compare/v1.1.1...v1.2.0) (2026-08-28)
 
 
