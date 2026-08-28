@@ -119,13 +119,28 @@ for reserved in source exec type; do
 done
 
 # Root documentation. The marketplace rejects a repo missing either.
-check "a root README exists" \
-  "$(ls -1 | grep -qiE '^readme(\..+)?$' && echo true || echo false)"
-check "a root license file exists" \
-  "$(ls -1 | grep -qiE '^(licen[cs]e|copying)(\..+)?$' && echo true || echo false)"
+readme_exists=false
+license_exists=false
+for file in *; do
+  [[ -f $file ]] || continue
+  lower=${file,,}
+  [[ $lower =~ ^readme(\..+)?$ ]] && readme_exists=true
+  [[ $lower =~ ^(license|licence|copying)(\..+)?$ ]] && license_exists=true
+done
+check "a root README exists" "$readme_exists"
+check "a root license file exists" "$license_exists"
 
 # The preview is optional; without one the marketplace substitutes its own.
-if ls -1 | grep -qiE '^preview\.(png|jpe?g|webp|avif)$'; then
+preview_exists=false
+for file in *; do
+  [[ -f $file ]] || continue
+  lower=${file,,}
+  if [[ $lower =~ ^preview\.(png|jpe?g|webp|avif)$ ]]; then
+    preview_exists=true
+    break
+  fi
+done
+if [[ $preview_exists == true ]]; then
   pass "a root preview image exists"
 else
   note "no root preview — the marketplace will use its fallback image"

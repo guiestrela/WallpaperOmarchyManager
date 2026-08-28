@@ -38,6 +38,9 @@ more robust for large or unsupported files.
 - **Bar widget** for all of it. Middle-click the icon for the next image;
   hover it to see thumbnails of what each display is about to get.
 
+For responsiveness, recursive scans stay on the selected filesystem, descend
+at most 32 levels, stop after 10,000 entries, and time out after 15 seconds.
+
 ### Animated wallpapers
 
 Place animated `.gif` or video files (`.mp4`, `.webm`, `.mkv`, `.mov`, `.avi`)

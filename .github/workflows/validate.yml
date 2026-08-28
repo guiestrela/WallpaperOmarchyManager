@@ -54,7 +54,10 @@ jobs:
       # transient outage into the same. The checks that decide pass or fail are
       # the two above.
       - name: Note if the pinned validator has moved on
-        if: always()
+        # The checkout and validation script are controlled by the PR author.
+        # Keep the workflow token out of fork-PR jobs; this advisory check is
+        # only needed on trusted pushes to main.
+        if: github.event_name == 'push'
         continue-on-error: true
         env:
           # The API is 60 requests an hour unauthenticated, shared across every

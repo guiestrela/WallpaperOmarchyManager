@@ -92,13 +92,24 @@ Item {
       if (c && c[key] !== undefined && c[key] !== null) return c[key]
       return legacy
     }
+    var folder = expandHome(String(pick("folder", setting("folder", ""))).trim())
+    var pinned = expandHome(String(pick("pinned", "")).trim())
+    // A pinned image is selected from the configured folder by the UI. Keep
+    // that invariant when settings are edited externally as well.
+    var relativePinned = folder !== "" && pinned.indexOf(folder + "/") === 0
+      ? pinned.substring(folder.length + 1) : ""
+    if (folder !== "" && pinned !== "" && pinned !== folder
+        && (relativePinned === "" || relativePinned === ".."
+          || relativePinned.indexOf("../") === 0
+          || relativePinned.indexOf("/../") !== -1
+          || relativePinned.endsWith("/.."))) pinned = ""
     var mode = String(pick("mode", "shuffle"))
     var scaling = String(pick("scaling", "zoom"))
     return {
-      folder: expandHome(String(pick("folder", setting("folder", ""))).trim()),
+      folder: folder,
       recursive: pick("recursive", setting("recursive", true)) === true,
       mode: mode === "single" ? "single" : "shuffle",
-      pinned: expandHome(String(pick("pinned", "")).trim()),
+      pinned: pinned,
       scaling: ["zoom", "fitHeight", "fitWidth", "actual"].indexOf(scaling) !== -1 ? scaling : "zoom"
     }
   }
@@ -347,11 +358,11 @@ Item {
     scanProc.command = ["bash", "-c",
       // Do not follow symlinks: a link inside the selected folder must not
       // make a scan escape that folder (or walk a loop/another filesystem).
-      "find -P " + Util.shellQuote(poolKeyFolder(key)) +
-      (poolKeyRecursive(key) ? "" : " -maxdepth 1") +
+      "timeout --kill-after=1s 15s find -P " + Util.shellQuote(poolKeyFolder(key)) +
+      " -xdev" + (poolKeyRecursive(key) ? " -maxdepth 32" : " -maxdepth 1") +
       " -type f \\( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.gif'" +
       " -o -iname '*.mp4' -o -iname '*.webm' -o -iname '*.mkv' -o -iname '*.mov' -o -iname '*.avi'" +
-      " -o -iname '*.bmp' -o -iname '*.webp' \\) -print 2>/dev/null | sort -u"]
+      " -o -iname '*.bmp' -o -iname '*.webp' \\) -print 2>/dev/null | head -n 10000 | sort -u"]
     scanProc.running = true
   }
 

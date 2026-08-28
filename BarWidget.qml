@@ -158,10 +158,11 @@ Panel {
     var folder = String(current.folder || "").trim()
     if (folder === "" || pickerProc.running) { pickerImages = []; return }
     pickerProc.command = ["bash", "-c",
-      "find -P " + Util.shellQuote(folder) + (current.recursive ? "" : " -maxdepth 1") +
+      "timeout --kill-after=1s 15s find -P " + Util.shellQuote(folder) +
+      " -xdev" + (current.recursive ? " -maxdepth 32" : " -maxdepth 1") +
       " -type f \\( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.gif'" +
       " -o -iname '*.mp4' -o -iname '*.webm' -o -iname '*.mkv' -o -iname '*.mov' -o -iname '*.avi'" +
-      " -o -iname '*.bmp' -o -iname '*.webp' \\) -print 2>/dev/null | sort -u"]
+      " -o -iname '*.bmp' -o -iname '*.webp' \\) -print 2>/dev/null | head -n 10000 | sort -u"]
     pickerProc.running = true
   }
 
