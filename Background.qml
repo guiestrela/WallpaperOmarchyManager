@@ -345,11 +345,13 @@ Item {
     // Newline-delimited, not -print0: StdioCollector hands the output over as
     // a string, and NUL separators do not survive that conversion.
     scanProc.command = ["bash", "-c",
-      "find -L " + Util.shellQuote(poolKeyFolder(key)) +
+      // Do not follow symlinks: a link inside the selected folder must not
+      // make a scan escape that folder (or walk a loop/another filesystem).
+      "find -P " + Util.shellQuote(poolKeyFolder(key)) +
       (poolKeyRecursive(key) ? "" : " -maxdepth 1") +
       " -type f \\( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.gif'" +
       " -o -iname '*.mp4' -o -iname '*.webm' -o -iname '*.mkv' -o -iname '*.mov' -o -iname '*.avi'" +
-      " -o -iname '*.bmp' -o -iname '*.webp' \\) -exec readlink -f -- {} \\; 2>/dev/null | sort -u"]
+      " -o -iname '*.bmp' -o -iname '*.webp' \\) -print 2>/dev/null | sort -u"]
     scanProc.running = true
   }
 

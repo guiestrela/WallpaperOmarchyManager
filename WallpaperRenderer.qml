@@ -52,7 +52,12 @@ Item {
       // Decode static and animated images near their rendered size. Some
       // wallpapers are tens of thousands of pixels wide and otherwise exceed
       // Qt's 256 MiB decoded-image limit even when the compressed file is small.
-      sourceSize: Qt.size(Math.max(1, Math.ceil(width)), Math.max(1, Math.ceil(height)))
+      // A wallpaper larger than the viewport has no visible detail beyond
+      // the viewport. Cap decoding at the monitor/widget size so "actual"
+      // scaling cannot turn a very large source image into a large allocation.
+      sourceSize: Qt.size(
+        Math.max(1, Math.ceil(Math.min(width, root.width))),
+        Math.max(1, Math.ceil(Math.min(height, root.height))))
       fillMode: root.fillModeName === "zoom" ? Image.PreserveAspectCrop : Image.Stretch
       asynchronous: true
       cache: false
