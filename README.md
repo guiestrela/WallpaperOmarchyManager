@@ -1,6 +1,6 @@
 # wallpaperOmarchyManager
 
-Current version: **1.1.1**
+Current version: **1.2.0**
 
 Wallpaper manager for [Omarchy](https://omarchy.org) Quattro. Every
 display gets its own image, its own settings if you want them, and your whole
@@ -8,6 +8,10 @@ setup can mix independent folders and shuffle controls per display.
 
 This project is a fork of [Omawall](https://github.com/matjam/omawall),
 adapted and maintained as wallpaperOmarchyManager.
+
+Version 1.2.0 improves the shuffle queue so recently displayed images are kept
+out of the next picks when possible, and makes recursive scanning and decoding
+more robust for large or unsupported files.
 
 > **Rewritten by Codex**, OpenAI's coding agent. Tested on real hardware, but
 > tested isn't proven — and Omarchy plugins run unsandboxed inside your shell
@@ -24,7 +28,8 @@ adapted and maintained as wallpaperOmarchyManager.
   thumbnail grid. Mix the two across screens.
 - **Four scaling modes** — zoom, fit height, fit width, or actual size.
 - **Every image before any repeat** — picks come off a shuffled queue that only
-  reshuffles when it empties.
+  reshuffles when it empties. Recently displayed images are also kept away from
+  the start of a new queue when the folder is large enough.
 - **Shuffle** on a timer, on unlock and screensaver exit, or by hand.
 - **Recursive scan** of `.jpg` `.jpeg` `.png` `.gif` `.bmp` `.webp` `.mp4`
   `.webm` `.mkv` `.mov` `.avi`; animated media plays as wallpapers
@@ -80,7 +85,7 @@ Click the wallpaper icon in the bar. Two tabs: **Displays** and
 | Setting | Default | Does |
 | --- | --- | --- |
 | Configure each display separately | off | On: a tab per display. Off: one shared configuration. |
-| Folder | _empty_ | Where images come from. Empty = current theme backgrounds. |
+| Folder | _empty_ | Where images come from. Empty = current theme backgrounds. Paths may use `~`. |
 | Search subfolders | on | Scan recursively. |
 | Mode | Shuffle | **Single** pins one image, chosen from a thumbnail grid. |
 | Scaling | Zoom | Zoom, Fit ↕, Fit ↔, or Actual. |
