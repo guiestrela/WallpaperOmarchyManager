@@ -7,6 +7,11 @@
 
 * **bar:** force plain text format for file labels ([23afcca](https://github.com/guiestrela/wallpaper-omarchy-manager/commit/23afccab28c903c277498239baaf2275f5fd2d05))
 
+### Security
+
+* reject control-character and overlong wallpaper paths before scanning
+* document the plugin's theme, font, technology, and sandbox limitations
+
 ## [1.2.1](https://github.com/guiestrela/wallpaper-omarchy-manager/compare/v1.2.0...v1.2.1) (2026-08-28)
 
 

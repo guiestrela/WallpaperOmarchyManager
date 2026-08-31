@@ -92,8 +92,8 @@ Item {
       if (c && c[key] !== undefined && c[key] !== null) return c[key]
       return legacy
     }
-    var folder = expandHome(String(pick("folder", setting("folder", ""))).trim())
-    var pinned = expandHome(String(pick("pinned", "")).trim())
+    var folder = safePath(pick("folder", setting("folder", "")))
+    var pinned = safePath(pick("pinned", ""))
     // A pinned image is selected from the configured folder by the UI. Keep
     // that invariant when settings are edited externally as well.
     var relativePinned = folder !== "" && pinned.indexOf(folder + "/") === 0
@@ -232,6 +232,15 @@ Item {
     if (path === "~") return home
     if (path.indexOf("~/") === 0) return home + path.substring(1)
     return path
+  }
+
+  // shellQuote protects syntax, while this rejects control characters that
+  // would make the newline-delimited scan ambiguous. The size limit also
+  // prevents an accidental paste from creating an oversized command line.
+  function safePath(path) {
+    var value = expandHome(String(path || "").trim())
+    if (value.length > 4096 || /[\u0000-\u001f\u007f]/.test(value)) return ""
+    return value
   }
 
   // ------------------------------------------------------- transition state

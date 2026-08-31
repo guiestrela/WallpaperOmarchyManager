@@ -155,7 +155,7 @@ Panel {
   // holds only what the *service* is configured to use, and the picker has to
   // show the folder being edited, which may be a different display's.
   function loadPicker() {
-    var folder = String(current.folder || "").trim()
+    var folder = safePath(current.folder)
     if (folder === "" || pickerProc.running) { pickerImages = []; return }
     pickerProc.command = ["bash", "-c",
       "timeout --kill-after=1s 15s find -P " + Util.shellQuote(folder) +
@@ -164,6 +164,17 @@ Panel {
       " -o -iname '*.mp4' -o -iname '*.webm' -o -iname '*.mkv' -o -iname '*.mov' -o -iname '*.avi'" +
       " -o -iname '*.bmp' -o -iname '*.webp' \\) -print 2>/dev/null | head -n 10000 | sort -u"]
     pickerProc.running = true
+  }
+
+  // Keep picker input consistent with the service. Control characters would
+  // corrupt the newline-delimited result returned by find.
+  function safePath(path) {
+    var value = String(path || "").trim()
+    var homePath = Quickshell.env("HOME")
+    if (value === "~") value = homePath
+    else if (value.indexOf("~/") === 0) value = homePath + value.substring(1)
+    if (value.length > 4096 || /[\u0000-\u001f\u007f]/.test(value)) return ""
+    return value
   }
 
   Process {

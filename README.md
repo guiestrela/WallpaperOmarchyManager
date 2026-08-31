@@ -1,6 +1,6 @@
 # wallpaperOmarchyManager
 
-Current version: **1.2.1**
+Current version: **1.2.2**
 
 Wallpaper manager for [Omarchy](https://omarchy.org) Quattro. Every
 display gets its own image, its own settings if you want them, and your whole
@@ -146,13 +146,38 @@ The runtime does not use the network. Settings are stored through Omarchy in
 `~/.config/omarchy`; the service also updates Omarchy's current-wallpaper link
 at `~/.local/state/omarchy/current/background` so the lock screen can use it.
 
+## Theme and fonts
+
+The plugin keeps Omarchy's theme behavior intact. In folder mode, changing the
+theme keeps the selected wallpaper but immediately applies the theme's color
+payload to the bar and settings panel. In the default mode, the normal
+Omarchy background transition is preserved.
+
+Text uses Quickshell's `Style.fontFamily` and themed size tokens, so the widget
+automatically follows the active Omarchy font and its accessibility sizing.
+It does not bundle, download, or install fonts.
+
+## Technology
+
+The plugin is built with QML for Quickshell and uses Qt Quick for the UI and
+transitions, Qt Multimedia for video playback, and Omarchy's shell/IPC
+interfaces for settings, theme changes, status, and the current-wallpaper
+link. File discovery is performed by a bounded local `find` process; no
+network service or background updater is included.
+
 ## Security notes
 
 Omarchy plugins run in the user's shell process and are not sandboxed. Only
 choose wallpaper folders containing files you trust: Qt Multimedia and the
 image decoders process the selected media. The plugin does not execute files
-from wallpaper folders, follow symlinks during scans, or request elevated
-permissions.
+from wallpaper folders, follow symlinks during scans, request elevated
+permissions, or use the network.
+
+Folder paths are shell-quoted before scanning, control characters and paths
+over 4096 characters are rejected, scans stay on the selected filesystem, do
+not follow symlinks, descend at most 32 levels, stop after 10,000 entries, and
+time out after 15 seconds. These limits reduce accidental resource exhaustion;
+they do not turn an Omarchy plugin into a sandbox.
 
 ## Credits
 
