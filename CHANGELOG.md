@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/guiestrela/wallpaper-omarchy-manager/compare/v1.2.1...v1.2.2) (2026-08-28)
+
+
+### Bug Fixes
+
+* **bar:** force plain text format for file labels ([23afcca](https://github.com/guiestrela/wallpaper-omarchy-manager/commit/23afccab28c903c277498239baaf2275f5fd2d05))
+
 ## [1.2.1](https://github.com/guiestrela/wallpaper-omarchy-manager/compare/v1.2.0...v1.2.1) (2026-08-28)
 
 
