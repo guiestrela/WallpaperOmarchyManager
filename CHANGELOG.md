@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.3](https://github.com/guiestrela/wallpaper-omarchy-manager/compare/v1.2.2...v1.2.3) (2026-08-31)
+
+
+### Bug Fixes
+
+* sanitize path inputs and update documentation ([e21777e](https://github.com/guiestrela/wallpaper-omarchy-manager/commit/e21777e6e81cfcba3c330d0c540513be1196a8a9))
+
 ## [1.2.2](https://github.com/guiestrela/wallpaper-omarchy-manager/compare/v1.2.1...v1.2.2) (2026-08-28)
 
 
